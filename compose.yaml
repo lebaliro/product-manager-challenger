@@ -1,0 +1,12 @@
+services:
+  project-manager-api:
+    build: 
+      context: product-manager-api
+      dockerfile: Dockerfile
+    volumes:
+      - ./product-manager-api:/app
+    ports:
+      - 3000:3000
+    env_file:
+      - product-manager-api/.env
+    command: npm run start:dev
