@@ -1,0 +1,11 @@
+build : Alterações relacionadas à configuração de build ou dependências (ex.: atualização de pacotes, mudanças no webpack, etc.).
+chore : Tarefas de manutenção ou pequenas alterações que não impactam diretamente o código da aplicação (ex.: scripts de automação).
+ci : Modificações na integração contínua (CI), como ajustes em pipelines, configurações de testes automatizados ou ferramentas de deploy.
+docs : Atualizações ou melhorias na documentação do projeto (ex.: README, comentários no código, guias).
+feat : Implementação de uma nova funcionalidade ou recurso no sistema.
+fix : Correção de bugs ou problemas existentes no código.
+perf : Melhorias de desempenho (performance) do sistema, sem alterar a funcionalidade (ex.: otimização de algoritmos).
+refactor : Refatoração de código existente para melhorar a estrutura, legibilidade ou organização, sem alterar o comportamento.
+revert : Reversão de commits anteriores, desfazendo mudanças feitas anteriormente.
+style : Alterações relacionadas ao estilo do código, como formatação, espaçamento ou correções de linting, sem impacto funcional.
+test : Adição ou modificação de testes automatizados (unitários, integração, etc.), sem alterar a lógica principal do código.
