@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { enrichProductModelConfig } from './common/configs/gemini.configs';
+import { enrichProductModelConfig } from './configs/gemini.configs';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { promptEnrichProduct } from './common/consts/ia.consts';
+import { promptEnrichProduct } from './consts/ia.consts';
+import { ProductEnrich } from './interfaces/ia.interfaces';
 
 @Injectable()
 export class IaService {
@@ -12,20 +13,26 @@ export class IaService {
     private readonly logger: LoggerGlobal,
   ) {}
 
-  async enrichProduct(productName: string): Promise<string> {
-    this.logger.log('Iniciado enriquecimento do Produto');
+  async enrichProduct(productName: string) {
+    this.logger.log('Iniciado enriquecimento do Produto por IA');
 
     const gemineModel = this.geminiProvider.getGenerativeModel(
       enrichProductModelConfig,
     );
 
-    const result = await gemineModel.generateContent(
+    const contentGenerated = await gemineModel.generateContent(
       promptEnrichProduct(productName),
     );
 
-    this.logger.log('Finalizado o enriquecimento do Produto');
+    const contentGeneratedString = contentGenerated.response.text();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const contentGeneratedJson: ProductEnrich = JSON.parse(
+      contentGeneratedString,
+    );
 
-    return result.response.text();
+    this.logger.log('Finalizado o enriquecimento do Produto por IA');
+
+    return contentGeneratedJson;
   }
 
   async generateEmbedding(content: string): Promise<number[]> {

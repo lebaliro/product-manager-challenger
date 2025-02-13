@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IaService } from './ia.service';
 import { LoggerModule } from 'src/common/logger/logger.module';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
-import { enrichProductModelConfig } from './common/configs/gemini.configs';
-import { promptEnrichProduct } from './common/consts/ia.consts';
+import { enrichProductModelConfig } from './configs/gemini.configs';
+import { promptEnrichProduct } from './consts/ia.consts';
 
 describe('IaService', () => {
   let iaService: IaService;
@@ -74,7 +74,7 @@ describe('IaService', () => {
   describe('generateEmbedding', () => {
     it('should return embedding values', async () => {
       const content = 'Text to be embedded';
-      const embeddedValue = [51, 50, 64]
+      const embeddedValue = [51, 50, 64];
       const mockEmbeddedContent = jest.fn().mockResolvedValue({
         embedding: { values: embeddedValue },
       });
@@ -84,7 +84,6 @@ describe('IaService', () => {
       }));
 
       const result = await iaService.generateEmbedding(content);
-
 
       expect(googleGenerativeAI.getGenerativeModel).toHaveBeenCalledWith({
         model: 'text-embedding-004',
