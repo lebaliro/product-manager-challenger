@@ -1,3 +1,6 @@
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "vector";
+
 -- CreateTable
 CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
@@ -5,6 +8,7 @@ CREATE TABLE "Product" (
     "technicalDescription" TEXT NOT NULL,
     "functionalities" TEXT[],
     "price" DECIMAL(65,30) NOT NULL,
+    "embedding" vector(768),
     "published" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
