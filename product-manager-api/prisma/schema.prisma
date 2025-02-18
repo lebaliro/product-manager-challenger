@@ -15,6 +15,15 @@ datasource db {
   extensions = [vector]
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  apikey    String    @unique
+  cpf       String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Product {
   id                   Int                         @id @default(autoincrement())
   name                 String
@@ -22,6 +31,8 @@ model Product {
   functionalities      String[]
   price                Decimal
   embedding            Unsupported("vector(768)")?
+  authorId             Int                         
+  author               User                        @relation(fields: [authorId], references: [id])
   createdAt            DateTime                    @default(now())
   updatedAt            DateTime                    @updatedAt
 }
