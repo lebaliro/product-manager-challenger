@@ -1,15 +1,26 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Scope,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './dtos/products.dto';
 import { IaService } from 'src/ia/ia.service';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
+import { ProductFindAllParams } from './types/products.types';
+import { REQUEST } from '@nestjs/core';
+import { STATUS_CODES } from 'http';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ProductsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly iaService: IaService,
     private readonly logger: LoggerGlobal,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   private contentToEmbedding(
@@ -20,24 +31,10 @@ export class ProductsService {
     return `${name} ${technicalDescription} ${funcionalityDescription.toString()}`;
   }
 
-  private async productExistValidator(name: string) {
-    const productExists = await this.prisma.product.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    if (productExists) {
-      throw new ConflictException('Você já criou um produto com esse nome.');
-    }
-  }
-
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user) {
     this.logger.log('Iniciado Criação do Produto');
 
     const name = createProductDto.name.toLocaleLowerCase().trim();
-
-    await this.productExistValidator(name);
 
     const { funcionalityDescription, price, technicalDescription } =
       await this.iaService.enrichProduct(name);
@@ -48,42 +45,60 @@ export class ProductsService {
       technicalDescription,
     );
 
+    console.log(contentToEmbedding);
+
     const embedding =
       await this.iaService.generateEmbedding(contentToEmbedding);
 
-    await this.prisma.$executeRawUnsafe(
-      `
+    await this.prisma.$executeRaw`
         INSERT INTO "Product" (
           "name",
           "technicalDescription",
           "functionalities",
           "price",
           "embedding",
+          "authorId",
           "createdAt",
           "updatedAt"
         )
-        VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-      `,
-      name,
-      technicalDescription,
-      funcionalityDescription,
-      price,
-      embedding,
-    );
+        VALUES (
+          ${name}, 
+          ${technicalDescription}, 
+          ${funcionalityDescription}, 
+          ${price}, 
+          ${embedding},
+          ${user.id},
+          NOW(), 
+          NOW()
+        )
+      `;
 
     this.logger.log('Finalizado Criação do Produto');
   }
 
-  async findAll(offset: number | undefined, productName: string) {
-    this.logger.log('Iniciado Listagem do Produto');
+  // TODO: mudar essa código para um pipe.
+  private isOffsetAndLimitValide(params: ProductFindAllParams) {
+    if (!params.offset || !params.limit) {
+      params.offset = undefined;
+      params.limit = undefined;
+    } else {
+      params.limit = Number(params.limit);
+      params.offset = Number(params.offset);
+    }
+    return params;
+  }
 
-    offset = offset ? Number(offset) : undefined;
+  async findAll(params: ProductFindAllParams, user) {
+    this.logger.log('Iniciado Listagem do Produto');
+    const paramsValidated = this.isOffsetAndLimitValide(params);
+    const { productName, offset, limit } = paramsValidated;
 
     const products = this.prisma.product.findMany({
-      take: 10,
+      take: limit,
       skip: offset,
       where: {
         name: { contains: productName },
+        authorId: user.id,
       },
     });
 
@@ -108,10 +123,26 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: number, UpdateProductDto: UpdateProductDto) {
+  private async isAuthorizated(id, userId) {
+    const product = await this.prisma.product.findFirst({
+      where: {
+        id: id,
+        authorId: userId,
+      },
+    });
+
+    if (!product) {
+      throw new HttpException('Algo deu errado', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async update(id: number, UpdateProductDto: UpdateProductDto, user) {
     this.logger.log('Iniciado Atualização do Produto');
 
     id = Number(id);
+
+    await this.isAuthorizated(id, user.id);
+
     const { name, technicalDescription, funcionalityDescription, price } =
       UpdateProductDto;
 
@@ -125,8 +156,8 @@ export class ProductsService {
       await this.iaService.generateEmbedding(contentToEmbedding);
 
     await this.prisma.$executeRawUnsafe(
-      `UPDATE "Product" 
-      SET name = $1, "technicalDescription" = $2, functionalities = $3, price = $4, embedding = $5 
+      `UPDATE "Product"
+      SET name = $1, "technicalDescription" = $2, functionalities = $3, price = $4, embedding = $5
       WHERE id=$6`,
       name,
       technicalDescription,
@@ -139,10 +170,12 @@ export class ProductsService {
     this.logger.log('Iniciado Atualização do Produto');
   }
 
-  async delete(id: number) {
+  async delete(id: number, user) {
     this.logger.log('Iniciado Deletar o Produto');
 
     id = Number(id);
+
+    await this.isAuthorizated(id, user.id);
 
     await this.prisma.product.delete({
       where: {

@@ -7,8 +7,8 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   name: string;
 
   @IsNotEmpty()
