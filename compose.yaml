@@ -9,7 +9,7 @@ services:
       - 3000:3000
     env_file:
       - product-manager-api/.env
-    command: npm run start:dev
+    command: ["/bin/sh", "./wait-for-db-and-migrate.sh"]
     depends_on:
       - postgres
   
@@ -22,7 +22,6 @@ services:
       - product-manager-api/.env
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - '5432:5432'
 
