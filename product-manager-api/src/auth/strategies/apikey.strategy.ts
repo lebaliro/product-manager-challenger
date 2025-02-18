@@ -12,14 +12,14 @@ export class ApiKeyStrategy extends PassportStrategy(
     super({ header: 'X-API-KEY', prefix: '' }, false);
   }
 
-  validate(
-    apiKey: string,
-    done: (error: Error | null, validateResult: boolean | null) => void,
+  async validate(
+    apikey: string,
+    done: (error: Error | null, validateResult: object | null) => void,
   ) {
-    const checkKey = this.authService.validateApiKey(apiKey);
-    if (checkKey) {
-      done(null, true);
+    const user = await this.authService.validateApiKey(apikey);
+    if (!user) {
+      return done(new UnauthorizedException('Usuário não autenticado!'), user);
     }
-    done(new UnauthorizedException('Usuário não autenticado!'), null);
+    return done(null, user);
   }
 }
