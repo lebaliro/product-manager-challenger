@@ -8,11 +8,11 @@ import { promptEnrichProduct } from './consts/ia.consts';
 describe('IaService', () => {
   let iaService: IaService;
   let logger: LoggerGlobal;
-
-  const googleGenerativeAI = {
-    getGenerativeModel: jest.fn(),
-  };
+  let googleGenerativeAI: { getGenerativeModel: jest.Mock };
   beforeEach(async () => {
+    googleGenerativeAI = {
+      getGenerativeModel: jest.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         IaService,
@@ -48,10 +48,11 @@ describe('IaService', () => {
   describe('enrichProduct', () => {
     it('should return enriched product', async () => {
       const productName = 'test';
+      const contentGenerated = '{ "response": "Enriched Product Description" }';
 
       const mockGenerateContent = jest.fn().mockResolvedValue({
         response: {
-          text: jest.fn().mockReturnValue('Enriched Product Description'),
+          text: jest.fn().mockReturnValue(contentGenerated),
         },
       });
 
@@ -67,7 +68,7 @@ describe('IaService', () => {
       expect(mockGenerateContent).toHaveBeenCalledWith(
         promptEnrichProduct('test'),
       );
-      expect(result).toBe('Enriched Product Description');
+      expect(result).toStrictEqual(JSON.parse(contentGenerated));
     });
   });
 

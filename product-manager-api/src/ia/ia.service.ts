@@ -12,7 +12,9 @@ export class IaService {
     private readonly geminiProvider: GoogleGenerativeAI,
     private readonly logger: LoggerGlobal,
   ) {}
-
+  // Melhorar a captura dos erros com try/catch a medida que
+  // os erros vão aparecendo com o tempo de uso, e a medida que
+  // vamos aprendendo sobre a API do gemini.
   async enrichProduct(productName: string) {
     this.logger.log('Iniciado enriquecimento do Produto por IA');
 
@@ -20,22 +22,19 @@ export class IaService {
       enrichProductModelConfig,
     );
 
-    const contentGenerated = await gemineModel.generateContent(
+    const contentGeneratedResponse = await gemineModel.generateContent(
       promptEnrichProduct(productName),
     );
 
-    const contentGeneratedString = contentGenerated.response.text();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const contentGeneratedJson: ProductEnrich = JSON.parse(
-      contentGeneratedString,
-    );
+    const contentGenerated = contentGeneratedResponse.response.text();
+    const contentGeneratedJson: ProductEnrich = JSON.parse(contentGenerated);
 
     this.logger.log('Finalizado o enriquecimento do Produto por IA');
 
     return contentGeneratedJson;
   }
 
-  async generateEmbedding(content: string): Promise<number[]> {
+  async generateEmbedding(content: string) {
     this.logger.log('Iniciado Gerador de Embedding');
 
     const gemineModel = this.geminiProvider.getGenerativeModel({
