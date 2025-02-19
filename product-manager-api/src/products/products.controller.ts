@@ -28,12 +28,8 @@ export class ProductsController {
     @Query('offset') offset: number | undefined,
     @Query('limit') limit: number | undefined,
     @Query('productName') productName: string | undefined,
-    @GetUser() user: UserDto,
   ) {
-    return await this.productsService.findAll(
-      { offset, limit, productName },
-      user,
-    );
+    return await this.productsService.findAll({ offset, limit, productName });
   }
 
   @Get(':id')

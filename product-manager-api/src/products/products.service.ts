@@ -73,7 +73,7 @@ export class ProductsService {
     this.logger.log('Finalizado Criação do Produto');
   }
 
-  async findAll(params: ProductFindAllParams, user: UserDto) {
+  async findAll(params: ProductFindAllParams) {
     this.logger.log('Iniciado Listagem do Produto');
     const { offset, limit, productName } = params;
 
@@ -84,7 +84,6 @@ export class ProductsService {
       skip: offset,
       where: {
         name: { contains: productName },
-        authorId: user.id,
       },
     });
 
@@ -116,7 +115,7 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new HttpException('Acesso negado', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Acesso negado', HttpStatus.FORBIDDEN);
     }
   }
 
