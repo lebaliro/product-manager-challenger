@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { ApiKeyStrategy } from './apikey.strategy';
 import { UnauthorizedException } from '@nestjs/common';
+import { UserDto } from '../dtos/auth.dto';
 
 describe('ApiKeyStrategy', () => {
   let authService: AuthService;
   let apiKeyStrategy: ApiKeyStrategy;
   let done: jest.Mock;
-  let mockUser: { id: number; apikey: string };
+  let mockUser: UserDto;
 
   beforeEach(async () => {
     mockUser = {
       id: 1,
       apikey: 'apikey',
+      cpf: 'cpf',
     };
     done = jest.fn();
 
