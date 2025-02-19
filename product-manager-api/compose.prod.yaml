@@ -1,0 +1,22 @@
+services:
+  project-manager-api-prod:
+    build: 
+      dockerfile: Dockerfile.Prod
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/dist
+      - /home/node/app/node_modules
+    ports:
+      - 3005:3000
+    env_file:
+      - .env.prod
+    depends_on:
+      - postgres-prod
+  
+  postgres-prod:
+    build:
+      context: .docker/db
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env.prod
