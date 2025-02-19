@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -11,15 +12,14 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto } from './dtos/products.dto';
 import { GetUser, Public } from 'src/auth/decorators/auth.decorators';
-import { userInfo } from 'os';
+import { UserDto } from 'src/auth/dtos/auth.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto, @GetUser() user: any) {
-    console.log(user.id);
+  create(@Body() createProductDto: CreateProductDto, @GetUser() user: UserDto) {
     return this.productsService.create(createProductDto, user);
   }
 
@@ -28,7 +28,7 @@ export class ProductsController {
     @Query('offset') offset: number | undefined,
     @Query('limit') limit: number | undefined,
     @Query('productName') productName: string | undefined,
-    @GetUser() user,
+    @GetUser() user: UserDto,
   ) {
     return await this.productsService.findAll(
       { offset, limit, productName },
@@ -38,21 +38,24 @@ export class ProductsController {
 
   @Get(':id')
   @Public()
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.productsService.findOne(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() UpdateProductDto: UpdateProductDto,
-    @GetUser() user,
+    @GetUser() user: UserDto,
   ) {
     await this.productsService.update(id, UpdateProductDto, user);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number, @GetUser() user) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: UserDto,
+  ) {
     await this.productsService.delete(id, user);
   }
 }

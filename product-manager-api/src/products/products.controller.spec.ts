@@ -4,9 +4,10 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { IaModule } from 'src/ia/ia.module';
 import { LoggerModule } from 'src/common/logger/logger.module';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { CreateProductDto, UpdateProductDto } from './dtos/products.dto';
 import { ProductFindAllParams } from './types/products.types';
+import { UserDto } from 'src/auth/dtos/auth.dto';
 
 describe('ProductsController', () => {
   let productController: ProductsController;
@@ -15,7 +16,7 @@ describe('ProductsController', () => {
   let mockUpdateProductDto: UpdateProductDto;
   let findAllParams: ProductFindAllParams;
   let mockProduct: { id: number; name: string };
-  let mockUser: { id: number };
+  let mockUser: UserDto;
 
   beforeEach(async () => {
     mockCreateProductDto = {
@@ -42,6 +43,8 @@ describe('ProductsController', () => {
 
     mockUser = {
       id: 1,
+      apikey: 'apikey',
+      cpf: 'cpf',
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -81,7 +84,10 @@ describe('ProductsController', () => {
 
       await productController.create(mockCreateProductDto, mockUser);
 
-      expect(productservice.create).toHaveBeenCalledWith(mockCreateProductDto);
+      expect(productservice.create).toHaveBeenCalledWith(
+        mockCreateProductDto,
+        mockUser,
+      );
     });
   });
   describe('findAll', () => {
@@ -93,10 +99,14 @@ describe('ProductsController', () => {
         findAllParams.offset,
         findAllParams.limit,
         findAllParams.productName,
+        mockUser,
       );
 
       expect(productList).toBe(mockListProcut);
-      expect(productservice.findAll).toHaveBeenCalledWith(findAllParams);
+      expect(productservice.findAll).toHaveBeenCalledWith(
+        findAllParams,
+        mockUser,
+      );
     });
   });
   describe('findOne', () => {
@@ -120,19 +130,27 @@ describe('ProductsController', () => {
         mockProductUpdated,
       );
 
-      await productController.update(mockProduct.id, mockUpdateProductDto);
+      await productController.update(
+        mockProduct.id,
+        mockUpdateProductDto,
+        mockUser,
+      );
 
       expect(productservice.update).toHaveBeenCalledWith(
         mockProduct.id,
         mockUpdateProductDto,
+        mockUser,
       );
     });
   });
   describe('delete', () => {
     it('should delete product', async () => {
-      await productController.delete(mockProduct.id);
+      await productController.delete(mockProduct.id, mockUser);
 
-      expect(productservice.delete).toHaveBeenCalledWith(mockProduct.id);
+      expect(productservice.delete).toHaveBeenCalledWith(
+        mockProduct.id,
+        mockUser,
+      );
     });
   });
 });

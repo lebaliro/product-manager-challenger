@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { IaModule } from 'src/ia/ia.module';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { LoggerModule } from 'src/common/logger/logger.module';
 
 @Module({
