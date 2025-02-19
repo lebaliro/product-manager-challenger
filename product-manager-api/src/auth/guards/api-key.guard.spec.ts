@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiKeyAuthGuard } from './api-key.guard';
@@ -8,7 +7,7 @@ import { ExecutionContext } from '@nestjs/common/interfaces';
 describe('ApiKeyAuthGuard', () => {
   let apiKeyAuthGuard: ApiKeyAuthGuard;
   let reflector: Reflector;
-  let mockInternalServices: { method: jest.Mock }; // Esse mock representa o serviço que está sendo chamado para verificar se ele é público ou não.
+  let mockInternalServices: { method: jest.Mock }; // Esse mock representa qualquer serviço do projeto.
   let context: ExecutionContext;
 
   beforeEach(async () => {
@@ -69,8 +68,8 @@ describe('ApiKeyAuthGuard', () => {
         context.getHandler(),
       );
     });
+    // TODO: Aprender a mockar a classe pai sem interferir a classe filho
     // it('should return super if route is not public', () => {
-    //   TODO Aprender a mockar a classe pai sem interferir a classe filho
     //     (reflector.get as jest.Mock).mockReturnValue(false);
     //     const isRoutePublic = apiKeyAuthGuard.canActivate(context);
     //     expect(isRoutePublic).toBe(false);

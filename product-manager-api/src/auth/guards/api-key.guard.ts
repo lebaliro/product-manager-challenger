@@ -13,6 +13,7 @@ export class ApiKeyAuthGuard extends AuthGuard('X-API-KEY') {
       'isPublic',
       context.getHandler(),
     );
+
     if (isPublic) {
       return true;
     }
