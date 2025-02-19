@@ -15,7 +15,7 @@ services:
   
   postgres:
     build:
-      context: db
+      context: product-manager-api/.docker/db
       dockerfile: Dockerfile
     restart: always
     env_file:
