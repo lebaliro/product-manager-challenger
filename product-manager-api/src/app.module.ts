@@ -5,7 +5,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { CatchFilter } from './common/filters/exception.filter';
 import { LoggerModule } from './common/logger/logger.module';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from './common/prisma/prisma.module';
 
 @Module({
   imports: [ProductsModule, IaModule, LoggerModule, AuthModule, PrismaModule],
