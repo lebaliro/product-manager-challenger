@@ -68,7 +68,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
     
       - name: List files in repository
-        run: ls -R
+        run: ls -R ./product-manager-api
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
