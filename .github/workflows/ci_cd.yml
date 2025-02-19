@@ -15,7 +15,7 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
+  REGISTRY: gcr.io
   IMAGE_NAME: product-manager-api/nest
   # github.repository as <account>/<repo>
   # IMAGE_NAME: ${{ github.repository }}
