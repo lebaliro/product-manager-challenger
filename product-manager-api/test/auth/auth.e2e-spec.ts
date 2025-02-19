@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/common/prisma/prisma.service';
 import { AppModule } from 'src/app.module';
-import { UserCreateDto } from 'src/auth/dtos/user.dto';
+import { UserCreateDto } from 'src/auth/dtos/auth.dto';
 import { USER_ALREADY_EXISTS } from 'src/auth/utils/auth.response';
 import { CreateProductDto } from 'src/products/dtos/products.dto';
 

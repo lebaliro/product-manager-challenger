@@ -2,8 +2,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { UserCreateDto } from './dtos/user.dto';
+import { PrismaModule } from 'src/common/prisma/prisma.module';
+import { UserCreateDto } from './dtos/auth.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;

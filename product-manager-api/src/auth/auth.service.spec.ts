@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/common/prisma/prisma.service';
 import { LoggerModule } from 'src/common/logger/logger.module';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
-import { UserCreateDto } from './dtos/user.dto';
+import { UserCreateDto, UserDto } from './dtos/auth.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 describe('AuthService', () => {
@@ -12,13 +12,28 @@ describe('AuthService', () => {
   let logger: LoggerGlobal;
   let prisma: PrismaService;
   let mockUserCreateDto: UserCreateDto;
-  // Todo aplicar DRY aos mocks, principalmente mockUser
-  let mockUser: { id: number; apikey: string; cpf: string };
+  let mockUser: UserDto;
+  let mockUserCreated: object;
+  let mockFindFirstUser: object;
+
   beforeEach(async () => {
     mockUserCreateDto = {
       cpf: '17350968060',
     };
     mockUser = { id: 1, apikey: 'wag28564', cpf: mockUserCreateDto.cpf };
+
+    mockUserCreated = {
+      data: {
+        cpf: mockUser.cpf,
+        apikey: mockUser.apikey,
+      },
+    };
+
+    mockFindFirstUser = {
+      where: {
+        apikey: mockUser.apikey,
+      },
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -61,12 +76,6 @@ describe('AuthService', () => {
     it('should be successful validating api key', async () => {
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(mockUser);
 
-      const mockFindFirstUser = {
-        where: {
-          apikey: mockUser.apikey,
-        },
-      };
-
       const user = await authService.validateApiKey(mockUser.apikey);
 
       expect(user).toBe(mockUser);
@@ -75,12 +84,6 @@ describe('AuthService', () => {
 
     it('should not be successful validating api key', async () => {
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
-
-      const mockFindFirstUser = {
-        where: {
-          apikey: mockUser.apikey,
-        },
-      };
 
       const isValide = await authService.validateApiKey(mockUser.apikey);
 
@@ -94,20 +97,13 @@ describe('AuthService', () => {
       authService.generateApiKey = jest.fn().mockReturnValue(mockUser.apikey);
       (prisma.user.create as jest.Mock).mockResolvedValue(mockUser);
 
-      const mockCreateUser = {
-        data: {
-          cpf: mockUser.cpf,
-          apikey: mockUser.apikey,
-        },
-      };
-
       const mockUserApiKey = await authService.createUser(mockUserCreateDto);
 
       expect(mockUserApiKey.apikey).toBe(mockUser.apikey);
       expect(authService.generateApiKey).toHaveBeenCalledWith(
         mockUserCreateDto.cpf,
       );
-      expect(prisma.user.create).toHaveBeenCalledWith(mockCreateUser);
+      expect(prisma.user.create).toHaveBeenCalledWith(mockUserCreated);
     });
 
     it('should return error "user already exists"', async () => {
@@ -123,18 +119,12 @@ describe('AuthService', () => {
       authService.generateApiKey = jest.fn().mockReturnValue(mockUser.apikey);
       (prisma.user.create as jest.Mock).mockRejectedValue(prismaError);
 
-      const mockCreateUser = {
-        data: {
-          cpf: mockUser.cpf,
-          apikey: mockUser.apikey,
-        },
-      };
       await expect(authService.createUser(mockUserCreateDto)).rejects.toThrow();
 
       expect(authService.generateApiKey).toHaveBeenCalledWith(
         mockUserCreateDto.cpf,
       );
-      expect(prisma.user.create).toHaveBeenCalledWith(mockCreateUser);
+      expect(prisma.user.create).toHaveBeenCalledWith(mockUserCreated);
     });
   });
 

@@ -1,18 +1,17 @@
 import {
-  HttpCode,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
   Scope,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './dtos/products.dto';
 import { IaService } from 'src/ia/ia.service';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
 import { ProductFindAllParams } from './types/products.types';
 import { REQUEST } from '@nestjs/core';
-import { STATUS_CODES } from 'http';
+import { UserDto } from 'src/auth/dtos/auth.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductsService {
@@ -31,7 +30,7 @@ export class ProductsService {
     return `${name} ${technicalDescription} ${funcionalityDescription.toString()}`;
   }
 
-  async create(createProductDto: CreateProductDto, user) {
+  async create(createProductDto: CreateProductDto, user: UserDto) {
     this.logger.log('Iniciado Criação do Produto');
 
     const name = createProductDto.name.toLocaleLowerCase().trim();
@@ -44,8 +43,6 @@ export class ProductsService {
       funcionalityDescription,
       technicalDescription,
     );
-
-    console.log(contentToEmbedding);
 
     const embedding =
       await this.iaService.generateEmbedding(contentToEmbedding);
@@ -76,25 +73,14 @@ export class ProductsService {
     this.logger.log('Finalizado Criação do Produto');
   }
 
-  // TODO: mudar essa código para um pipe.
-  private isOffsetAndLimitValide(params: ProductFindAllParams) {
-    if (!params.offset || !params.limit) {
-      params.offset = undefined;
-      params.limit = undefined;
-    } else {
-      params.limit = Number(params.limit);
-      params.offset = Number(params.offset);
-    }
-    return params;
-  }
-
-  async findAll(params: ProductFindAllParams, user) {
+  async findAll(params: ProductFindAllParams, user: UserDto) {
     this.logger.log('Iniciado Listagem do Produto');
-    const paramsValidated = this.isOffsetAndLimitValide(params);
-    const { productName, offset, limit } = paramsValidated;
+    const { offset, limit, productName } = params;
+
+    const take = limit ? limit : 10;
 
     const products = this.prisma.product.findMany({
-      take: limit,
+      take,
       skip: offset,
       where: {
         name: { contains: productName },
@@ -110,8 +96,6 @@ export class ProductsService {
   async findOne(id: number) {
     this.logger.log('Iniciado Detalhamento do Produto');
 
-    id = Number(id);
-
     const product = this.prisma.product.findFirst({
       where: {
         id,
@@ -123,7 +107,7 @@ export class ProductsService {
     return product;
   }
 
-  private async isAuthorizated(id, userId) {
+  private async isAuthorizated(id: number, userId: number) {
     const product = await this.prisma.product.findFirst({
       where: {
         id: id,
@@ -132,14 +116,12 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new HttpException('Algo deu errado', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Acesso negado', HttpStatus.UNAUTHORIZED);
     }
   }
 
-  async update(id: number, UpdateProductDto: UpdateProductDto, user) {
+  async update(id: number, UpdateProductDto: UpdateProductDto, user: UserDto) {
     this.logger.log('Iniciado Atualização do Produto');
-
-    id = Number(id);
 
     await this.isAuthorizated(id, user.id);
 
@@ -170,10 +152,8 @@ export class ProductsService {
     this.logger.log('Iniciado Atualização do Produto');
   }
 
-  async delete(id: number, user) {
+  async delete(id: number, user: UserDto) {
     this.logger.log('Iniciado Deletar o Produto');
-
-    id = Number(id);
 
     await this.isAuthorizated(id, user.id);
 

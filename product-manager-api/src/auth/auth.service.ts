@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UserCreateDto } from './dtos/user.dto';
+import { PrismaService } from 'src/common/prisma/prisma.service';
+import { UserCreateDto } from './dtos/auth.dto';
 import { createHash } from 'crypto';
 import { LoggerGlobal } from 'src/common/logger/logger.provider';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
