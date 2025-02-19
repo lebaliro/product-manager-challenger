@@ -151,14 +151,12 @@ describe('ProductsService', () => {
     const filterMockProducts = (mockQuery: mockQuery) => {
       const productsFiltered = mockProducts.filter((mockProduct) => {
         const productName = mockQuery.where.name?.contains;
-        const userId = mockQuery.where.authorId;
 
         const isNameEqual = productName // Essa condição está estrita para simplificar o teste.
           ? mockProduct.name === productName
           : true;
-        const isUserAuthorizated = mockProduct.authorId === userId;
 
-        if (isNameEqual && isUserAuthorizated) return true;
+        if (isNameEqual) return true;
       }); // Todo
       return productsFiltered;
     };
@@ -169,12 +167,12 @@ describe('ProductsService', () => {
         skip: mockProductFindAllParams.offset,
         where: {
           name: { contains: mockProductFindAllParams.productName },
-          authorId: mockUser.id,
         },
       };
 
       const mockProductsResponse = [
         { id: 1, name: 'product1', authorId: 1 },
+        { id: 2, name: 'product2', authorId: 2 },
         { id: 3, name: 'product3', authorId: 1 },
       ];
 
@@ -182,10 +180,7 @@ describe('ProductsService', () => {
         return Promise.resolve(filterMockProducts(mockQuery));
       });
 
-      const products = await productService.findAll(
-        mockProductFindAllParams,
-        mockUser,
-      );
+      const products = await productService.findAll(mockProductFindAllParams);
 
       expect(products).toStrictEqual(mockProductsResponse);
       expect(prisma.product.findMany).toHaveBeenCalledWith(mockQuery);
@@ -197,7 +192,6 @@ describe('ProductsService', () => {
         skip: mockProductFindAllParams.offset,
         where: {
           name: { contains: 'product3' },
-          authorId: mockUser.id,
         },
       };
 
@@ -207,10 +201,7 @@ describe('ProductsService', () => {
 
       mockProductFindAllParams.productName = mockQuery.where.name.contains;
 
-      const products = await productService.findAll(
-        mockProductFindAllParams,
-        mockUser,
-      );
+      const products = await productService.findAll(mockProductFindAllParams);
 
       expect(products).toStrictEqual([mockProducts[2]]);
       expect(prisma.product.findMany).toHaveBeenCalledWith(mockQuery);

@@ -99,14 +99,10 @@ describe('ProductsController', () => {
         findAllParams.offset,
         findAllParams.limit,
         findAllParams.productName,
-        mockUser,
       );
 
       expect(productList).toBe(mockListProcut);
-      expect(productservice.findAll).toHaveBeenCalledWith(
-        findAllParams,
-        mockUser,
-      );
+      expect(productservice.findAll).toHaveBeenCalledWith(findAllParams);
     });
   });
   describe('findOne', () => {
