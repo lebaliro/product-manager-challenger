@@ -70,8 +70,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
     
-      - name: Verificar qual conta está autenticada
-        run: gcloud auth list
+      - name: Debug Artifact Registry login
+        run: echo "${{ secrets.GCP_SA_KEY }}" | docker login -u _json_key --password-stdin ${{ env.REGISTRY }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
