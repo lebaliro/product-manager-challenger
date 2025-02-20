@@ -4,12 +4,16 @@ Um pequeno projeto voltado para gerenciar produtos integrados com a IA Gemine.
 Para mais informações do projeto, como requisitos do sistema, fluxos do sistema e regras de negócio segue o [link do figma](https://www.figma.com/board/F3QeGaJpgPVWaeVSzWdFvz/product-manager?node-id=0-1&p=f&t=JdkOrilX5eSDLrx6-0).
 
 # Tecnologias
+#### Back-end:
 - NestJs
 - DockerFile
 - Jest / SuperTest
 - Gemine IA
 - Passport | Apikey Auth
 - Prisma
+## Infra
+- Cloud Run e Cloud SQL
+- GitHub Actions
 
 # Testando o Projeto
 Não é necessário clonar e rodar o projeto localmente pois ele está sendo executado em uma Cloud Run do google. Basta apenas acessar [esse link do postman] e fazer os testes utilizando a collection de staging.
