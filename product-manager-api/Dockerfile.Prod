@@ -1,6 +1,8 @@
 FROM node:20.18-slim
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && \ 
+        apt-get install -y openssl && \
+        apt-get install -y wget
 
 USER node
 
@@ -18,7 +20,7 @@ RUN npx prisma generate --schema=/home/node/app/prisma/schema.prisma
 
 RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
 
-RUN chmod +x cloud_sql_proxy"
+RUN chmod +x cloud_sql_proxy
 
 RUN ./cloud_sql_proxy -instances=product-manager-api-451421:southamerica-east1:product-manager-api=tcp:5432 & npx prisma migrate deploy --schema=/home/node/app/prisma/schema.prisma
 
