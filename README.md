@@ -17,7 +17,9 @@ Para mais informações do projeto, como requisitos do sistema, fluxos do sistem
 
 # Testando o Projeto
 
-O projeto pode ser testado de **duas formas** distintas: 
+
+# Back-end
+A api pode ser testada de **duas formas** distintas: 
 
 1. **Utilizando o Postman com a Cloud Run do Google**  
    O projeto já está em execução na **Cloud Run**, o que significa que você não precisa clonar ou configurar o ambiente localmente para começar a testá-lo. Basta acessar [esse link do Postman](https://www.postman.com/orbital-module-observer-12483690/product-manager-api/collection/39881858-41abad9a-a98c-4c5a-8970-ed3b677276ab) e utilizar a **collection de staging** para realizar os testes diretamente no ambiente hospedado.
@@ -27,9 +29,19 @@ O projeto pode ser testado de **duas formas** distintas:
 
 ---
 
-# Configurações
+# Como Rodar o Projeto Localmente
 
-Para rodar o projeto localmente, é necessário configurar os arquivos `.env` e `.env.test`. Abaixo estão os dados necessários para essas configurações, exceto pela **API Key do Gemine**, que precisará ser criada por você.
+Se optar por rodar o projeto localmente, siga os passos abaixo:
+
+### 1. Clone o repositório e acesse o diretório:
+```bash
+git clone https://github.com/lebaliro/product-manager-challenger.git
+cd product-manager-challenger
+```
+
+### 2. Configurações
+
+Para rodar a api localmente, é necessário configurar os arquivos `.env` e `.env.test` que se encontram dentro da pasta `/product-manager-api`. Abaixo estão os dados necessários para essas configurações, exceto pela **API Key do Gemine**, que precisará ser criada por você.
 
 ### Criando uma API Key
 Você pode criar sua própria API Key acessando [esse link](https://aistudio.google.com/app/apikey?hl=pt-br).
@@ -45,30 +57,19 @@ SALT_TO_API_KEY=kSkmSlkmd2M4emKM4dbPOE453UEhGLqÇ-
 ```
 
 ### Exemplo de `.env.test`
-```env.test
+```env
 TEST_DATABASE_URL="postgresql://product-manager-api:12345678@postgres:5432/product-manager-test?schema=public"
 ```
 
 > **Nota:** Certifique-se de ter o [Docker](https://docs.docker.com/manuals/) instalado em sua máquina antes de prosseguir.
 
----
 
-# Como Rodar o Projeto Localmente
-
-Se optar por rodar o projeto localmente, siga os passos abaixo:
-
-### 1. Clone o repositório e acesse o diretório:
-```bash
-git clone https://github.com/lebaliro/product-manager-challenger.git
-cd product-manager-challenger
-```
-
-### 2. Suba os containers usando o Docker Compose:
+### 3. Suba os containers usando o Docker Compose:
 ```bash
 docker compose -f 'compose.yaml' up -d --build
 ```
 
-### 3. Verifique se os containers estão em execução:
+### 4. Verifique se os containers estão em execução:
 ```bash
 docker ps
 ```
