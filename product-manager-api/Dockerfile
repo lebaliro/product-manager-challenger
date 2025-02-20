@@ -14,8 +14,4 @@ RUN chmod +x /app/wait-for-db-and-migrate.sh
 
 RUN npm run build
 
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
-
 EXPOSE 3000
