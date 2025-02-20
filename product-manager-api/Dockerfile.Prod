@@ -6,9 +6,10 @@ USER node
 
 RUN mkdir -p /home/node/app
 
-WORKDIR /the/workdir/path
+WORKDIR /home/node/app
 
 COPY --chown=node:node package*.json ./
+
 RUN npm install
 
 COPY --chown=node:node . .

@@ -129,5 +129,4 @@ jobs:
         run: "chmod +x cloud_sql_proxy"
         
       - name: Start the Cloud SQL proxy
-        run: "./cloud_sql_proxy -instances=product-manager-api-451421:us-central1:api-product-manager=tcp:5432 & npx prisma migrate deploy"
-
+        run: "./cloud_sql_proxy -instances=product-manager-api-451421:southamerica-east1:product-manager-api=tcp:5432 & npx prisma migrate deploy"
