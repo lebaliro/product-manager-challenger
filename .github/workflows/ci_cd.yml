@@ -74,7 +74,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Debug path
-        uses: ls -R
+        run: ls -R
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
