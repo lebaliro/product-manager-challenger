@@ -17,7 +17,4 @@ RUN npx prisma generate
 
 RUN npm run build
 
-COPY --chown=node:node entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+RUN npm run start:prod
