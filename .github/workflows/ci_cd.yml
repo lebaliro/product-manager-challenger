@@ -124,12 +124,3 @@ jobs:
           image: ${{ needs.ci.outputs.tags }}
           region: ${{ env.REGION }}
           env_vars: DATABASE_URL=${{ secrets.POSTGRES_URL }}
-
-      - name: Download SQL Auth Proxy
-        run: "wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy"
-        
-      - name: Make the Cloud SQL Auth proxy executable
-        run: "chmod +x cloud_sql_proxy"
-        
-      - name: Start the Cloud SQL proxy
-        run: "./cloud_sql_proxy -instances=product-manager-api-451421:southamerica-east1:product-manager-api=tcp:5432 & npx prisma migrate deploy --schema=/product-manager-api/prisma/schema.prisma"
