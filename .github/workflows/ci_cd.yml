@@ -132,5 +132,5 @@ jobs:
         run: "chmod +x cloud_sql_proxy"
           
       - name: Start the Cloud SQL proxy
-        run: "./cloud_sql_proxy -instances=direct-album-348214:us-central1:nest-fun-basic=tcp:5432 & npx prisma migrate deploy"      
+        run: "./cloud_sql_proxy -instances=direct-album-348214:us-central1:nest-fun-basic=tcp:5432"      
   
