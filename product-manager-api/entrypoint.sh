@@ -2,4 +2,4 @@
 
 npx prisma migrate deploy
 
-npm node dist/main.js
+npm npm run start:prod
