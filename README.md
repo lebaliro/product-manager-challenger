@@ -16,7 +16,7 @@ Para mais informações do projeto, como requisitos do sistema, fluxos do sistem
 - GitHub Actions
 
 # Testando o Projeto
-Não é necessário clonar e rodar o projeto localmente pois ele está sendo executado em uma Cloud Run do google. Basta apenas acessar [esse link do postman] e fazer os testes utilizando a collection de staging.
+Não é necessário clonar e rodar o projeto localmente pois ele está sendo executado em uma Cloud Run do google. Basta apenas acessar [esse link do postman](https://www.postman.com/orbital-module-observer-12483690/product-manager-api/collection/39881858-41abad9a-a98c-4c5a-8970-ed3b677276ab) e fazer os testes utilizando a collection de staging.
 
 # Configurações
 Para rodar o projeto é necessário configurar a `.env` e a `.env.test`. Estarei disponibilizando todos os dados das envs, menos para a api key do Gemine, nesse caso, será necessário criar uma.
