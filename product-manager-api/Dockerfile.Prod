@@ -22,4 +22,4 @@ RUN npx prisma generate
 
 RUN npm run build
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "./entrypoint.sh"]
