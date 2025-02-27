@@ -40,7 +40,7 @@ export class CatchFilter implements ExceptionFilter {
 
     const messageLogger = {
       ...responseBody,
-      errorMessage: String(exception),
+      errorMessage: exception,
     };
 
     this.logger.error(messageLogger);

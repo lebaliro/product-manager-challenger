@@ -11,6 +11,11 @@ async function bootstrap() {
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new ApiKeyAuthGuard(reflector));
+  app.enableCors({
+    origin: 'http://localhost:3001', // Permite requisições do frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Métodos permitidos
+    credentials: true, // Permite o envio de credenciais (cookies, headers de autenticação, etc.)
+  });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useLogger(app.get(LoggerGlobal));
